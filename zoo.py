@@ -24,6 +24,7 @@
 """
 from os.path import exists
 import json
+import random
 
 #=========================================
 # Animals
@@ -44,6 +45,19 @@ class Animals:
             return self.__items[animal_number]
         else:
             print(f"Животное c №{animal_number} не найдено")
+            return None
+
+    def get_random_animal(self, biology_class = None) :
+        animals = []
+        if biology_class:
+            for animal in self.__items:
+                if isinstance(animal, biology_class):
+                    animals.append(animal)
+        else:
+            animals = self.__items
+        if len(animals) > 0:
+            return random.choice(animals)
+        else:
             return None
 
     def show(self):
@@ -234,7 +248,20 @@ class Staff:
         if 0 <= employee_number < len(self.__items):
             return self.__items[employee_number]
         else:
-            print(f"Сотрудника с №{employee_number} не найдено")
+            print(f"Сотрудник с №{employee_number} не найден")
+            return None
+
+    def get_random_employee(self, job_class = None):
+        employees = []
+        if job_class:
+            for employee in self.__items:
+                if isinstance(employee, job_class):
+                    employees.append(employee)
+        else:
+            employees = self.__items
+        if len(employees) > 0:
+            return random.choice(employees)
+        else:
             return None
 
     def show(self):
@@ -293,7 +320,7 @@ class Staff:
             del self.__items[employee_number]
             print(message)
         else:
-            print(f"Сотрудника с №{employee_number} не найдено")
+            print(f"Сотрудник с №{employee_number} не найден")
 
     def load(self, data: {}):
         self.__items.clear()
@@ -443,6 +470,25 @@ class Zoo:
     def get_animal(self, index: int):
         return self.animals.get_animal(index)
 
+    def one_day(self):
+        # random animal move
+        animal = self.animals.get_random_animal()
+        if animal:
+            animal.make_move()
+
+        # random Veterinarian heal and animal sound
+        veterinarian = self.staff.get_random_employee(Veterinarian)
+        animal = self.animals.get_random_animal()
+        if veterinarian and animal:
+            veterinarian.heal_animal(animal)
+            animal.make_sound()
+
+        # random Zookeeper feed animal and animal eat
+        zookeeper = self.staff.get_random_employee(ZooKeeper)
+        animal = self.animals.get_random_animal()
+        if zookeeper and animal:
+            zookeeper.feed_animal(animal)
+            animal.eat()
 
 #=========================================
 
@@ -474,6 +520,7 @@ def main():
             print("5. Приобрести животное")
             print("6. Отпустить животное")
             print("7. Голоса животных")
+            print("8. Посмотреть что твориться в зоопарке")
             print("0. Выход")
 
             try:
@@ -500,6 +547,8 @@ def main():
                     animal3 = zoo.get_animal(3)
                     zoo.animal_sound([animal1, animal2, animal3])
                     pass
+                elif choice == 8:  # Посмотреть что твориться в зоопарке
+                    zoo.one_day()
                 else:
                     print("Неверный выбор. Попробуйте снова.")
 
